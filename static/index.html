@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLAC & White</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    /* ── Reset ─────────────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Tokens ─────────────────────────────────────────────────────────────── */
+    :root {
+      --bg:         #F5F4F0;
+      --surface:    #FFFFFF;
+      --border:     #DDDBD6;
+      --border-2:   #C8C6C0;
+
+      --ink-1:      #111110;
+      --ink-2:      #5C5B58;
+      --ink-3:      #9B9A96;
+
+      --go-bg:      #EAF3EC;
+      --go-ink:     #1A5230;
+      --cond-bg:    #FBF3E3;
+      --cond-ink:   #7A4F12;
+      --no-bg:      #FAE9E8;
+      --no-ink:     #6B1F1C;
+
+      --q3-bg:      #EAF3EC;
+      --q2-bg:      #FBF3E3;
+      --q4-bg:      #E8EEF5;
+      --q1-bg:      #FAE9E8;
+
+      --space-1: 8px;
+      --space-2: 16px;
+      --space-3: 24px;
+      --space-4: 32px;
+      --space-5: 48px;
+      --space-6: 64px;
+    }
+
+    /* ── Base ───────────────────────────────────────────────────────────────── */
+    html { font-size: 14px; }
+
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--ink-1);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Layout ─────────────────────────────────────────────────────────────── */
+    .shell {
+      display: grid;
+      grid-template-rows: 56px 1fr;
+      height: 100vh;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-5);
+      gap: var(--space-3);
+    }
+
+    .topbar-logo {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--ink-1);
+    }
+
+    .topbar-divider {
+      width: 1px;
+      height: 16px;
+      background: var(--border);
+    }
+
+    .topbar-sub {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    .columns {
+      display: grid;
+      grid-template-columns: 400px 1fr;
+      overflow: hidden;
+    }
+
+    /* ── Input panel ────────────────────────────────────────────────────────── */
+    .input-panel {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .panel-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: var(--space-4);
+    }
+
+    /* ── Fields ─────────────────────────────────────────────────────────────── */
+    .field {
+      margin-bottom: var(--space-3);
+    }
+
+    .field label {
+      display: block;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: var(--space-1);
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      padding: 9px 11px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--ink-1);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.5;
+      border-radius: 0;
+      outline: none;
+      appearance: none;
+      transition: border-color 0.12s;
+    }
+
+    .field select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239B9A96'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--ink-1);
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 72px;
+    }
+
+    .row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2);
+    }
+
+    /* ── Segmented control ──────────────────────────────────────────────────── */
+    .seg {
+      display: flex;
+      border: 1px solid var(--border);
+    }
+
+    .seg input[type="radio"] { display: none; }
+
+    .seg-label {
+      flex: 1;
+      padding: 8px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: var(--ink-2);
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+      transition: background 0.1s, color 0.1s;
+      user-select: none;
+    }
+
+    .seg-label:last-of-type { border-right: none; }
+
+    .seg input[type="radio"]:checked + .seg-label {
+      background: var(--ink-1);
+      color: #FFF;
+    }
+
+    /* ── Divider ────────────────────────────────────────────────────────────── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: var(--space-3) 0;
+    }
+
+    /* ── Run button ─────────────────────────────────────────────────────────── */
+    #btn-run {
+      width: 100%;
+      padding: 13px;
+      background: var(--ink-1);
+      color: #FFF;
+      border: none;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 0;
+      transition: opacity 0.12s;
+      margin-top: var(--space-1);
+    }
+
+    #btn-run:hover:not(:disabled) { opacity: 0.82; }
+    #btn-run:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* ── Output panel ───────────────────────────────────────────────────────── */
+    .output-panel {
+      overflow-y: auto;
+      padding: var(--space-5);
+    }
+
+    /* ── Empty state ────────────────────────────────────────────────────────── */
+    .empty {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      color: var(--ink-3);
+    }
+
+    .empty-mark {
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      padding: 6px;
+    }
+
+    .empty-mark span {
+      background: var(--border);
+    }
+
+    .empty p {
+      font-size: 12px;
+      letter-spacing: 0.03em;
+    }
+
+    .hidden { display: none !important; }
+
+    /* ── Results ────────────────────────────────────────────────────────────── */
+    #results {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-4);
+    }
+
+    .export-btn {
+      padding: 7px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-2);
+      cursor: pointer;
+      border-radius: 0;
+      transition: border-color 0.12s, color 0.12s;
+    }
+
+    .export-btn:hover { border-color: var(--ink-1); color: var(--ink-1); }
+    .export-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* ── Progress ───────────────────────────────────────────────────────────── */
+    .progress {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: var(--space-4);
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      transition: color 0.2s;
+    }
+
+    .step-dot {
+      width: 10px;
+      height: 10px;
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .step.is-active { color: var(--ink-1); }
+    .step.is-active .step-dot {
+      border-color: var(--ink-1);
+      background: var(--ink-1);
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    .step.is-done { color: var(--go-ink); }
+    .step.is-done .step-dot {
+      border-color: var(--go-ink);
+      background: var(--go-ink);
+    }
+
+    .step-connector {
+      flex: 1;
+      max-width: 40px;
+      height: 1px;
+      background: var(--border);
+      margin: 0 var(--space-1);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ── Score cards ────────────────────────────────────────────────────────── */
+    .scores-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--border);
+      margin-bottom: var(--space-4);
+    }
+
+    .score-card {
+      background: var(--surface);
+      padding: var(--space-3) var(--space-2);
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+
+    .score-card:last-child { border-right: none; }
+
+    .score-num {
+      font-size: 36px;
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      color: var(--ink-1);
+      margin-bottom: 6px;
+      transition: color 0.3s;
+    }
+
+    .score-lbl {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    .score-num.score-high { color: var(--go-ink); }
+    .score-num.score-mid  { color: var(--cond-ink); }
+    .score-num.score-low  { color: var(--no-ink); }
+
+    /* ── Quadrant ───────────────────────────────────────────────────────────── */
+    .quad-wrap {
+      margin-bottom: var(--space-4);
+    }
+
+    .quad-axis-row {
+      display: grid;
+      grid-template-columns: 64px 1fr 1fr;
+      margin-bottom: 2px;
+    }
+
+    .quad-axis-lbl {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      text-align: center;
+      padding-bottom: 4px;
+    }
+
+    .quad-body {
+      display: grid;
+      grid-template-columns: 64px 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      height: 200px;
+      border: 1px solid var(--border);
+    }
+
+    .quad-row-lbl {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 12px;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .quad-row-lbl:last-child { border-bottom: none; }
+
+    .quad-cell {
+      padding: var(--space-2);
+      border-left: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: all 0.3s;
+    }
+
+    .quad-cell:nth-child(even) { border-bottom: none; }
+
+    .quad-cell-name {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--ink-2);
+    }
+
+    .quad-cell-tag {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    .quad-cell.q3 { background: var(--q3-bg); }
+    .quad-cell.q2 { background: var(--q2-bg); }
+    .quad-cell.q4 { background: var(--q4-bg); }
+    .quad-cell.q1 { background: var(--q1-bg); }
+
+    .quad-cell.is-active::after {
+      content: "";
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--ink-1);
+    }
+
+    /* ── Decision badge ─────────────────────────────────────────────────────── */
+    .decision-block {
+      margin-bottom: var(--space-4);
+    }
+
+    .decision-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: var(--space-2);
+    }
+
+    .decision-badge::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .badge-go        { background: var(--go-bg);   color: var(--go-ink);   }
+    .badge-go::before { background: var(--go-ink); }
+    .badge-cond      { background: var(--cond-bg); color: var(--cond-ink); }
+    .badge-cond::before { background: var(--cond-ink); }
+    .badge-no        { background: var(--no-bg);   color: var(--no-ink);   }
+    .badge-no::before { background: var(--no-ink); }
+
+    .decision-rationale {
+      font-size: 13px;
+      color: var(--ink-2);
+      line-height: 1.6;
+    }
+
+    /* ── Markdown report ────────────────────────────────────────────────────── */
+    .report {
+      font-size: 13px;
+      color: var(--ink-1);
+      line-height: 1.75;
+    }
+
+    .report h1 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--space-4);
+    }
+
+    .report h2 {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin: var(--space-4) 0 var(--space-2);
+      padding-top: var(--space-3);
+      border-top: 1px solid var(--border);
+    }
+
+    .report h3 {
+      font-size: 13px;
+      font-weight: 600;
+      margin: var(--space-3) 0 var(--space-1);
+    }
+
+    .report p { margin-bottom: var(--space-2); }
+
+    .report ul, .report ol {
+      padding-left: var(--space-3);
+      margin-bottom: var(--space-2);
+    }
+
+    .report li { margin-bottom: 4px; }
+
+    .report strong { font-weight: 600; }
+
+    .report table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: var(--space-3);
+      font-size: 12px;
+    }
+
+    .report th {
+      text-align: left;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      padding: 8px 12px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .report td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--ink-2);
+    }
+
+    .report code {
+      font-family: "SFMono-Regular", "Consolas", monospace;
+      font-size: 11px;
+      background: var(--bg);
+      padding: 2px 5px;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Section label ──────────────────────────────────────────────────────── */
+    .sec-lbl {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      margin-bottom: var(--space-2);
+    }
+
+    /* ── Intro text ─────────────────────────────────────────────────────────── */
+    .intro-text {
+      font-size: 12px;
+      color: var(--ink-2);
+      line-height: 1.6;
+      margin-bottom: var(--space-3);
+    }
+
+    .intro-text strong {
+      color: var(--ink-1);
+      font-weight: 600;
+    }
+
+    /* ── Field hint ────────────────────────────────────────────────────────── */
+    .field-hint {
+      font-size: 11px;
+      color: var(--ink-3);
+      margin-top: 5px;
+      line-height: 1.45;
+    }
+
+    /* ── Error toast ────────────────────────────────────────────────────────── */
+    .error-msg {
+      padding: var(--space-2) var(--space-3);
+      background: var(--no-bg);
+      color: var(--no-ink);
+      font-size: 12px;
+      border: 1px solid #E8B4B3;
+      margin-bottom: var(--space-3);
+    }
+  </style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <span class="topbar-logo">BLAC &amp; White</span>
+    <div class="topbar-divider"></div>
+    <span class="topbar-sub">Strategic Analysis — Skok Framework</span>
+  </header>
+
+  <div class="columns">
+
+    <!-- ── Input Panel ──────────────────────────────────────────────────────── -->
+    <aside class="input-panel">
+      <p class="panel-label">Eingabe</p>
+      <p class="intro-text">BLAC &amp; White bewertet ob dein Problem <strong>sichtbar</strong>, <strong>kritisch</strong> und <strong>unbesetzt</strong> genug ist — und gibt dir eine klare Go/No-Go-Empfehlung.</p>
+
+      <hr class="divider">
+
+      <!-- Depth -->
+      <div class="field">
+        <label>Analysetiefe</label>
+        <div class="seg">
+          <input type="radio" name="depth" id="d-memory" value="memory">
+          <label class="seg-label" for="d-memory">Memory</label>
+          <input type="radio" name="depth" id="d-quick" value="quick">
+          <label class="seg-label" for="d-quick">Quick</label>
+          <input type="radio" name="depth" id="d-standard" value="standard" checked>
+          <label class="seg-label" for="d-standard">Standard</label>
+          <input type="radio" name="depth" id="d-deep" value="deep">
+          <label class="seg-label" for="d-deep">Deep</label>
+        </div>
+        <p class="field-hint" id="depth-hint">Standard: vollständige Analyse mit Roadmap (~2k Tokens).</p>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Core inputs -->
+      <div class="field">
+        <label>Problem</label>
+        <textarea id="f-problem" placeholder="z.B. Handwerker verbringen 5h/Woche mit Papierkram statt mit ihrer Arbeit"></textarea>
+        <p class="field-hint">Das konkrete Problem deiner Zielkunden — was kostet sie Zeit, Geld oder Nerven? Je spezifischer, desto besser.</p>
+      </div>
+
+      <div class="field">
+        <label>Lösung</label>
+        <textarea id="f-solution" placeholder="z.B. App die Angebote und Rechnungen per Sprachbefehl erstellt"></textarea>
+        <p class="field-hint">Dein geplantes Produkt oder Service in einem Satz — was tust du konkret dagegen?</p>
+      </div>
+
+      <div class="field">
+        <label>Segmente</label>
+        <input type="text" id="f-segments" placeholder="z.B. Elektriker, Klempner, kleine Baufirmen">
+        <p class="field-hint">Welche Kundengruppen willst du vergleichen? (kommagetrennt) — die Analyse zeigt, welches Segment am reifsten für deine Lösung ist.</p>
+      </div>
+
+      <div class="field">
+        <label>Branche</label>
+        <input type="text" id="f-industry" placeholder="z.B. Handwerk, FinTech, Gesundheit">
+        <p class="field-hint">Markt oder Branche, in der du tätig bist — hilft bei der Wettbewerbseinschätzung.</p>
+      </div>
+
+      <div class="field">
+        <label>Regionen</label>
+        <input type="text" id="f-regions" placeholder="z.B. Deutschland, DACH, EU">
+        <p class="field-hint">Welche Märkte willst du zuerst adressieren?</p>
+      </div>
+
+      <div class="field">
+        <label>Stage — wo stehst du?</label>
+        <select id="f-stage">
+          <option>Idea</option>
+          <option selected>MVP</option>
+          <option>Growth</option>
+          <option>Scale</option>
+        </select>
+        <p class="field-hint" id="stage-hint">MVP: Erste Version gebaut, du testest mit ersten Nutzern.</p>
+      </div>
+
+      <div class="field">
+        <label>Geschäftsmodell</label>
+        <div class="seg">
+          <input type="radio" name="model" id="m-b2b" value="B2B" checked>
+          <label class="seg-label" for="m-b2b">B2B</label>
+          <input type="radio" name="model" id="m-b2c" value="B2C">
+          <label class="seg-label" for="m-b2c">B2C</label>
+          <input type="radio" name="model" id="m-hybrid" value="Hybrid">
+          <label class="seg-label" for="m-hybrid">Hybrid</label>
+        </div>
+        <p class="field-hint" id="model-hint">B2B: du verkaufst an Unternehmen.</p>
+      </div>
+
+      <button id="btn-run" onclick="runAnalysis()">Analyse starten</button>
+    </aside>
+
+    <!-- ── Output Panel ─────────────────────────────────────────────────────── -->
+    <main class="output-panel">
+
+      <!-- Empty state -->
+      <div class="empty" id="empty-state">
+        <div class="empty-mark">
+          <span></span><span></span>
+          <span></span><span></span>
+        </div>
+        <p>Eingabe ausfüllen und Analyse starten.</p>
+      </div>
+
+      <!-- Results -->
+      <div id="results" class="hidden">
+
+        <div class="results-header">
+          <p class="sec-lbl">Ergebnis</p>
+          <button class="export-btn" id="btn-export" onclick="exportMd()" disabled>
+            Export .md
+          </button>
+        </div>
+
+        <!-- Progress steps -->
+        <div class="progress">
+          <div class="step" id="s1">
+            <div class="step-dot"></div>
+            <span>Analyse</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step" id="s2">
+            <div class="step-dot"></div>
+            <span>Strategie</span>
+          </div>
+          <div class="step-connector"></div>
+          <div class="step" id="s3">
+            <div class="step-dot"></div>
+            <span>Report</span>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Error -->
+        <div id="error-block" class="error-msg hidden"></div>
+
+        <!-- Scores + Quadrant (appear after Agent 1) -->
+        <div id="block-scores" class="hidden">
+
+          <p class="sec-lbl">Scores</p>
+          <div class="scores-grid">
+            <div class="score-card">
+              <div class="score-num" id="sc-v">—</div>
+              <div class="score-lbl">Sichtbarkeit</div>
+            </div>
+            <div class="score-card">
+              <div class="score-num" id="sc-c">—</div>
+              <div class="score-lbl">Kritikalität</div>
+            </div>
+            <div class="score-card">
+              <div class="score-num" id="sc-w">—</div>
+              <div class="score-lbl">White Space</div>
+            </div>
+          </div>
+
+          <p class="sec-lbl">Quadrant</p>
+          <div class="quad-wrap">
+            <div class="quad-axis-row">
+              <div></div>
+              <div class="quad-axis-lbl">Aspirational</div>
+              <div class="quad-axis-lbl">Critical</div>
+            </div>
+            <div class="quad-body">
+              <!-- Row: Blatant -->
+              <div class="quad-row-lbl">Blatant</div>
+              <div class="quad-cell q2" id="qc-q2">
+                <span class="quad-cell-name">Blatant / Aspirational</span>
+                <span class="quad-cell-tag">Q2</span>
+              </div>
+              <div class="quad-cell q3" id="qc-q3">
+                <span class="quad-cell-name">Blatant / Critical</span>
+                <span class="quad-cell-tag">Q3 — Sweet Spot</span>
+              </div>
+              <!-- Row: Latent -->
+              <div class="quad-row-lbl">Latent</div>
+              <div class="quad-cell q1" id="qc-q1">
+                <span class="quad-cell-name">Latent / Aspirational</span>
+                <span class="quad-cell-tag">Q1</span>
+              </div>
+              <div class="quad-cell q4" id="qc-q4">
+                <span class="quad-cell-name">Latent / Critical</span>
+                <span class="quad-cell-tag">Q4</span>
+              </div>
+            </div>
+          </div>
+
+          <hr class="divider">
+        </div>
+
+        <!-- Decision (appear after Agent 2) -->
+        <div id="block-decision" class="hidden">
+          <p class="sec-lbl">Entscheidung</p>
+          <div class="decision-block">
+            <div class="decision-badge" id="decision-badge">—</div>
+            <p class="decision-rationale" id="decision-rationale"></p>
+          </div>
+          <hr class="divider">
+        </div>
+
+        <!-- Report (appear after Agent 3) -->
+        <div id="block-report" class="hidden">
+          <div class="report" id="report-content"></div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+</div>
+
+<script>
+  let lastReport = '';
+
+  marked.setOptions({ breaks: true, gfm: true });
+
+  const DEPTH_HINTS = {
+    memory:   'Memory: Claudes eingebautes Framework-Wissen — kein langer Prompt, weniger Tokens, schneller.',
+    quick:    'Quick: Kernergebnisse ohne Details (~1k Tokens).',
+    standard: 'Standard: vollständige Analyse mit Roadmap (~2k Tokens).',
+    deep:     'Deep: maximale Tiefe mit Wettbewerbs- und Moat-Analyse (~3k Tokens).',
+  };
+
+  const STAGE_HINTS = {
+    Idea:   'Idea: Du hast noch nichts gebaut — nur eine Idee oder Hypothese.',
+    MVP:    'MVP: Erste Version gebaut, du testest mit ersten Nutzern.',
+    Growth: 'Growth: Zahlende Kunden vorhanden, du wächst aktiv.',
+    Scale:  'Scale: Bewiesenes Modell — du skalierst jetzt.',
+  };
+
+  const MODEL_HINTS = {
+    B2B:    'B2B: Du verkaufst an Unternehmen oder Selbstständige.',
+    B2C:    'B2C: Du verkaufst direkt an Privatkunden.',
+    Hybrid: 'Hybrid: Beides — z.B. Software für Firmen, die an Konsumenten verkaufen.',
+  };
+
+  document.querySelectorAll('input[name="depth"]').forEach(r => {
+    r.addEventListener('change', () => {
+      document.getElementById('depth-hint').textContent = DEPTH_HINTS[r.value] || '';
+    });
+  });
+
+  document.getElementById('f-stage').addEventListener('change', function() {
+    document.getElementById('stage-hint').textContent = STAGE_HINTS[this.value] || '';
+  });
+
+  document.querySelectorAll('input[name="model"]').forEach(r => {
+    r.addEventListener('change', () => {
+      document.getElementById('model-hint').textContent = MODEL_HINTS[r.value] || '';
+    });
+  });
+
+  function scoreClass(n) {
+    if (n >= 7) return 'score-high';
+    if (n >= 4) return 'score-mid';
+    return 'score-low';
+  }
+
+  function setStep(id, state) {
+    const el = document.getElementById(id);
+    el.classList.remove('is-active', 'is-done');
+    if (state) el.classList.add(state);
+  }
+
+  function showBlock(id) {
+    document.getElementById(id).classList.remove('hidden');
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-block');
+    el.textContent = 'Fehler: ' + msg;
+    el.classList.remove('hidden');
+  }
+
+  async function runAnalysis() {
+    const btn = document.getElementById('btn-run');
+    btn.disabled = true;
+    btn.textContent = 'Analysiere…';
+    document.getElementById('btn-export').disabled = true;
+    lastReport = '';
+
+    const problem  = document.getElementById('f-problem').value.trim();
+    const solution = document.getElementById('f-solution').value.trim();
+
+    // Fall back to example input if fields are empty
+    const userInput = {
+      problem:  problem  || 'KMUs verlieren täglich Stunden durch manuelle Buchhaltung',
+      solution: solution || 'KI-gestützte Buchhaltungsautomatisierung für KMUs',
+      segments: document.getElementById('f-segments').value.split(',').map(s => s.trim()).filter(Boolean),
+      industry: document.getElementById('f-industry').value.trim() || 'FinTech / SaaS',
+      regions:  document.getElementById('f-regions').value.split(',').map(s => s.trim()).filter(Boolean),
+      stage:    document.getElementById('f-stage').value,
+      model:    document.querySelector('input[name="model"]:checked').value,
+    };
+    if (!userInput.segments.length) userInput.segments = ['KMU Dienstleistung', 'Freiberufler'];
+    if (!userInput.regions.length)  userInput.regions  = ['DACH'];
+
+    const depthVal = document.querySelector('input[name="depth"]:checked').value;
+    const isMemory = depthVal === 'memory';
+    const depth    = isMemory ? 'quick' : depthVal;
+
+    // Reset UI
+    document.getElementById('empty-state').classList.add('hidden');
+    showBlock('results');
+    ['block-scores', 'block-decision', 'block-report', 'error-block'].forEach(id =>
+      document.getElementById(id).classList.add('hidden')
+    );
+    ['q1','q2','q3','q4'].forEach(q =>
+      document.getElementById('qc-q' + q[1]).classList.remove('is-active')
+    );
+    ['s1','s2','s3'].forEach(id => setStep(id, null));
+
+    setStep('s1', 'is-active');
+
+    try {
+      const resp = await fetch('/analyse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ input: userInput, depth, memory: isMemory }),
+      });
+
+      const reader = resp.body.getReader();
+      const dec = new TextDecoder();
+      let buf = '';
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const lines = buf.split('\n');
+        buf = lines.pop();
+
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const ev = JSON.parse(line.slice(6));
+
+          if (ev.step === 'error') {
+            showError(ev.message);
+            break;
+          }
+
+          if (ev.step === 1) {
+            setStep('s1', 'is-done');
+            setStep('s2', 'is-active');
+
+            const a = ev.data;
+            const nums = { v: a.scores.visibility, c: a.scores.criticality, w: a.scores.white_space };
+            ['v', 'c', 'w'].forEach(k => {
+              const el = document.getElementById('sc-' + k);
+              el.textContent = nums[k];
+              el.className = 'score-num ' + scoreClass(nums[k]);
+            });
+
+            const q = (a.quadrant || 'Q1').toLowerCase();
+            document.getElementById('qc-' + q)?.classList.add('is-active');
+
+            showBlock('block-scores');
+          }
+
+          if (ev.step === 2) {
+            setStep('s2', 'is-done');
+            setStep('s3', 'is-active');
+
+            const s = ev.data;
+            const badge = document.getElementById('decision-badge');
+            badge.textContent = (s.decision || '—').replace('_', ' ');
+            badge.className = 'decision-badge';
+            if      (s.decision === 'GO')             badge.classList.add('badge-go');
+            else if (s.decision === 'NO_GO')           badge.classList.add('badge-no');
+            else                                       badge.classList.add('badge-cond');
+
+            document.getElementById('decision-rationale').textContent = s.decision_rationale || '';
+            showBlock('block-decision');
+          }
+
+          if (ev.step === 3) {
+            setStep('s3', 'is-done');
+
+            lastReport = ev.data;
+            document.getElementById('report-content').innerHTML = marked.parse(ev.data);
+            showBlock('block-report');
+            document.getElementById('btn-export').disabled = false;
+          }
+        }
+      }
+    } catch (e) {
+      showError(e.message);
+    }
+
+    btn.disabled = false;
+    btn.textContent = 'Analyse starten';
+  }
+
+  function exportMd() {
+    if (!lastReport) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([lastReport], { type: 'text/markdown' }));
+    a.download = 'blac-analyse.md';
+    a.click();
+  }
+</script>
+</body>
+</html>
