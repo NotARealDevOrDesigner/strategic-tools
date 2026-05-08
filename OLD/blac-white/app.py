@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3 das ist eine hfg tool app
 """BLAC & White — FastAPI Server"""
 
 import asyncio
